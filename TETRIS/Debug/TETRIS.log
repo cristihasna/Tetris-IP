@@ -1,3 +1,4 @@
-﻿  Source.cpp
+﻿  Menu.cpp
+e:\onedrive\tools\homeworks\tetris\tetris\menu.cpp(24): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
   TETRIS.vcxproj -> E:\OneDrive\tools\homeworks\TETRIS\Debug\TETRIS.exe
   TETRIS.vcxproj -> E:\OneDrive\tools\homeworks\TETRIS\Debug\TETRIS.pdb (Partial PDB)
