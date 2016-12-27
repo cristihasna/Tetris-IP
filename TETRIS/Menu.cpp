@@ -38,7 +38,7 @@ Menu::~Menu()
 }
 
 
-void Menu::draw(sf::RenderWindow &window) {
+void Menu::Draw(sf::RenderWindow &window) {
 	sf::Texture menuBackground;
 	menuBackground.loadFromFile("images/menuBg.jpg");
 	sf::Sprite background(menuBackground);
