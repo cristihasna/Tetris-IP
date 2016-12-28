@@ -110,16 +110,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Board.cpp" />
+    <ClCompile Include="Game.cpp" />
     <ClCompile Include="HighScores.cpp" />
     <ClCompile Include="Menu.cpp" />
+    <ClCompile Include="Pieces.cpp" />
     <ClCompile Include="Source.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Board.h" />
+    <ClInclude Include="Game.h" />
     <ClInclude Include="HighScores.h" />
     <ClInclude Include="Menu.h" />
+    <ClInclude Include="Pieces.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="HighScores.txt" />

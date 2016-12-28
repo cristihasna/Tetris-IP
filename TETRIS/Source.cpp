@@ -3,14 +3,12 @@
 #include <iostream>
 #include "Menu.h"
 #include "HighScores.h"
+#include "Board.h"
+#include "Pieces.h"
+#include "Game.h"
 
 using namespace std;
 using namespace sf;
-
-#define moveSpeed 18
-#define delay 0.5
-#define M 20
-#define N 26
 
 int main() {
 
@@ -18,8 +16,11 @@ int main() {
 	RenderWindow window(VideoMode(720, 480), "Tetris", Style::Close);
 	
 	Menu menu(window.getSize().x, window.getSize().y);
-
 	HighScores highScores(window);
+	Board board(window);
+	Pieces pieces(window);
+	Game game(window);
+
 
 	Clock clock;
 	float timer = 0;
@@ -46,6 +47,9 @@ int main() {
 							cout << "am dat drumu la joc" << endl;
 							isGameActive = true;
 							isMenuActive = false;
+
+							game.init(board, pieces);
+
 						}
 
 						else if (menu.getSelectedMenuItem() == 1) {
@@ -101,14 +105,17 @@ int main() {
 			float time = clock.getElapsedTime().asSeconds();
 			clock.restart();
 			timer += time;
+
 		}
 
-		window.clear(Color::White);
+		window.clear(Color::Black);
 
 		if (isMenuActive) 
 			menu.Draw(window);
 
-		else if (isGameActive);
+		else if (isGameActive) {
+			board.Draw(window);
+		}
 
 		else if (isHighScoresActive) {
 			highScores.Draw(window);
