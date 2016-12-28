@@ -1,6 +1,7 @@
 #include "Pieces.h"
 
 
+
 Pieces::Pieces(sf::RenderWindow &window)
 {
 }

@@ -7,6 +7,8 @@
 #include "Pieces.h"
 #include "Game.h"
 
+#define delay 0.5
+
 using namespace std;
 using namespace sf;
 
@@ -21,8 +23,10 @@ int main() {
 	Pieces pieces(window);
 	Game game(window);
 
+	float score = 0;
 
 	Clock clock;
+
 	float timer = 0;
 	bool left = 0, right = 0;
 	bool isMenuActive = true,
@@ -44,10 +48,8 @@ int main() {
 					if (e.key.code == Keyboard::Return) {
 
 						if (menu.getSelectedMenuItem() == 0) {
-							cout << "am dat drumu la joc" << endl;
 							isGameActive = true;
 							isMenuActive = false;
-
 							game.init(board, pieces);
 
 						}
@@ -93,6 +95,37 @@ int main() {
 						isGameActive = false;
 						isMenuActive = true;
 					}
+					if (e.key.code == Keyboard::Left) {
+						if (game.checkLeft(board)) {
+							game.moveLeft(board);
+							timer = 0;
+						}
+					}
+					if (e.key.code == Keyboard::Right) {
+						if (game.checkRight(board)) {
+							game.moveRight(board);
+							timer = 0;
+						}
+					}
+
+					if (e.key.code == Keyboard::Down) {
+						if (game.checkDown(board)) {
+							game.moveDown(board);
+							timer = 0;
+						}
+					}
+					if (e.key.code == Keyboard::Up) {
+						if (game.checkRotate(board, pieces, game.actualPiece)) {
+							game.Rotate(board, pieces, game.actualPiece);
+							timer = 0;
+						}
+					}
+					if (e.key.code == Keyboard::Space) {
+						while (game.checkDown(board)) {
+							game.moveDown(board);
+						}
+						timer = 0;
+					}
 				}
 
 			}
@@ -105,6 +138,23 @@ int main() {
 			float time = clock.getElapsedTime().asSeconds();
 			clock.restart();
 			timer += time;
+			if(!board.gameOver()) {
+				if(game.checkDown(board)) {
+					if (timer > delay) {
+						timer = 0;
+						game.moveDown(board);
+					}
+				}
+				else {
+					if (timer > delay) {
+						board.merge();
+						board.clearLine(score);
+						std::cout << score << std::endl;
+						if(!board.gameOver()) game.addPieceToBoard(board, pieces);
+						timer = 0;
+					}
+				}
+			}
 
 		}
 
@@ -114,7 +164,7 @@ int main() {
 			menu.Draw(window);
 
 		else if (isGameActive) {
-			board.Draw(window);
+			board.Draw(window, game.nextPiece);
 		}
 
 		else if (isHighScoresActive) {

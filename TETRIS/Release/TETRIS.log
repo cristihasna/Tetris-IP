@@ -1,0 +1,9 @@
+﻿  Board.cpp
+Board.cpp(68): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Board.cpp(73): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+Board.cpp(81): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  Generating code
+  Finished generating code
+  All 187 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  TETRIS.vcxproj -> E:\OneDrive\tools\homeworks\TETRIS\Release\TETRIS.exe
+  TETRIS.vcxproj -> E:\OneDrive\tools\homeworks\TETRIS\Release\TETRIS.pdb (Full PDB)

@@ -1,4 +1,11 @@
-﻿  Game.cpp
-e:\onedrive\tools\homeworks\tetris\tetris\game.cpp(35): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+﻿  Source.cpp
+e:\onedrive\tools\homeworks\tetris\tetris\source.cpp(20): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+  Board.cpp
+e:\onedrive\tools\homeworks\tetris\tetris\board.cpp(89): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+e:\onedrive\tools\homeworks\tetris\tetris\board.cpp(94): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+e:\onedrive\tools\homeworks\tetris\tetris\board.cpp(102): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  Generating Code...
+  Skipping... (no relevant changes detected)
+  Game.cpp
   TETRIS.vcxproj -> E:\OneDrive\tools\homeworks\TETRIS\Debug\TETRIS.exe
   TETRIS.vcxproj -> E:\OneDrive\tools\homeworks\TETRIS\Debug\TETRIS.pdb (Partial PDB)

@@ -1,5 +1,6 @@
 #pragma once
 #include <SFML\Graphics.hpp>
+#include "Pieces.h"
 
 #define ROWS 20
 #define COLS 15
@@ -16,8 +17,9 @@ public:
 	~Board();
 	void init();
 	bool gameOver();
-	void clearLine();
-	void Draw(sf::RenderWindow &window);
+	void clearLine(float &score);
+	void merge();
+	void Draw(sf::RenderWindow &window, sf::Vector2i nextPiece);
 
 
 };

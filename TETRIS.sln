@@ -21,6 +21,7 @@ Global
 		{BC00312A-946E-4C18-85C1-B5DB172E2C6B}.Release|x64.Build.0 = Release|x64
 		{BC00312A-946E-4C18-85C1-B5DB172E2C6B}.Release|x86.ActiveCfg = Release|Win32
 		{BC00312A-946E-4C18-85C1-B5DB172E2C6B}.Release|x86.Build.0 = Release|Win32
+		{BC00312A-946E-4C18-85C1-B5DB172E2C6B}.Release|x86.Deploy.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
