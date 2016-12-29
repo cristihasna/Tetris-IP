@@ -31,7 +31,7 @@ void Board::merge() {
 				board[i][j] = 3;
 }
 
-void Board::clearLine(float &score){
+void Board::clearLine(int &score){
 	score += 10;
 	int cleared = 0;
 	int coeficient = 100;

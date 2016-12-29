@@ -2,7 +2,8 @@
 #include "Board.h"
 #include "Pieces.h"
 #include <iostream>
-
+#include <string>
+#include <cstring>
 
 Game::Game(sf::RenderWindow &window)
 {
@@ -28,6 +29,10 @@ void Game::init(Board &Board, Pieces Pieces) {
 	Board.init();
 	sf::Vector2i initialPosition = Pieces.getInitialPosition(actualPiece.x, actualPiece.y);
 	Game::addPieceToBoard(Board, Pieces);
+	Game::minutesElapsed = 0;
+	Game::secondsElapsed = 0;
+	Game::score = 0;
+	Game::delay = 0.7;
 }
 sf::Vector2i Game::generatePiece(Pieces Pieces) {
 	srand(time(NULL));
@@ -144,4 +149,43 @@ void Game::Rotate(Board &Board, Pieces Pieces, sf::Vector2i &piece) {
 			if (Board.board[i][j] != 3)
 				Board.board[i][j] = Pieces.pieces[piece.x][piece.y][iP][jP];
 		}
+}
+void Game::drawInfo(sf::RenderWindow &window) {
+	Game::speed = 100 - Game::delay * 100;
+	sf::Font gameInfoFont;
+	gameInfoFont.loadFromFile("fonts/Roboto-Medium.ttf");
+	sf::Text gameInfo[3];
+	std::string gameScore = std::to_string(Game::score);
+	std::string minutes = std::to_string((int)Game::minutesElapsed);
+	std::string seconds= std::to_string((int)Game::secondsElapsed);
+	std::string gameTime = minutes + ':' + seconds;
+	std::string speed = std::to_string(Game::speed);
+
+	gameInfo[0].setString(gameScore);
+	gameInfo[0].setPosition(sf::Vector2f((OFFSET_X + COLS + 1) * 18 +3, (OFFSET_Y + 6) * 18));
+	gameInfo[0].setFillColor(sf::Color::White);
+	gameInfo[0].setFont(gameInfoFont);
+	gameInfo[0].setCharacterSize(24);
+
+	gameInfo[1].setString(gameTime);
+	gameInfo[1].setPosition(sf::Vector2f((OFFSET_X + COLS + 1) * 18 +3, (OFFSET_Y + 8) * 18 + 56));
+	gameInfo[1].setFillColor(sf::Color::White);
+	gameInfo[1].setFont(gameInfoFont);
+	gameInfo[1].setCharacterSize(24);
+
+	gameInfo[2].setString(speed);
+	gameInfo[2].setPosition(sf::Vector2f((OFFSET_X + COLS + 1) * 18 +3, (OFFSET_Y + 7) * 18 + 28));
+	gameInfo[2].setFillColor(sf::Color::White);
+	gameInfo[2].setFont(gameInfoFont);
+	gameInfo[2].setCharacterSize(24);
+
+	for(int i=0;i<3;i++)
+	window.draw(gameInfo[i]);
+}
+void Game::drawGameOver(sf::RenderWindow &window) {
+	sf::Texture goBackground;
+	goBackground.loadFromFile("images/gameOver.png");
+	sf::Sprite goSprite(goBackground);
+	goSprite.setTextureRect(sf::IntRect(0, 0, 720, 480));
+	window.draw(goSprite);
 }

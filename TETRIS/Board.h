@@ -17,7 +17,7 @@ public:
 	~Board();
 	void init();
 	bool gameOver();
-	void clearLine(float &score);
+	void clearLine(int &score);
 	void merge();
 	void Draw(sf::RenderWindow &window, sf::Vector2i nextPiece);
 

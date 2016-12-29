@@ -20,8 +20,12 @@ public:
 	void moveRight(Board &Board);
 	void moveLeft(Board &Board);
 	void Rotate(Board &Board, Pieces Pieces, sf::Vector2i &piece);
+	void drawInfo(sf::RenderWindow &window);
+	void drawGameOver(sf::RenderWindow &window);
 public:
 	sf::Vector2i actualPiece;
 	sf::Vector2i nextPiece;
+	float minutesElapsed, secondsElapsed, delay;
+	int score, speed;
 };
 

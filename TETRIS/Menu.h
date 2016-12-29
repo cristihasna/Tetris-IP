@@ -21,6 +21,7 @@ private:
 	int selectedItemIndex;
 	sf::Font font1, font2;
 	sf::Text menu[MAX_NUM_ITEMS];
+	sf::Sprite settingsButtom;
 
 };
 

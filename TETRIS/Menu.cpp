@@ -8,7 +8,6 @@ Menu::Menu(float width, float height)
 {
 	if (!font1.loadFromFile("fonts/Roboto-Medium.ttf") || !font2.loadFromFile("fonts/BAUHS93.ttf")) {
 		std::cout << "Nu s-a putut incarca Roboto-Medium.ttf" << std::endl;
-
 	}
 	
 	menu[0].setFont(font2);
@@ -29,6 +28,8 @@ Menu::Menu(float width, float height)
 	menu[2].setPosition(sf::Vector2f((width - 140) / 2, height / (MAX_NUM_ITEMS + 1) * 2 +60));
 
 	selectedItemIndex = 0;
+
+
 	
 }
 
@@ -39,14 +40,30 @@ Menu::~Menu()
 
 
 void Menu::Draw(sf::RenderWindow &window) {
-	sf::Texture menuBackground;
+	sf::Texture menuBackground, settingsButtonBackground, settingsButtonBackgroundHover;
 	menuBackground.loadFromFile("images/menuBg.jpg");
+	settingsButtonBackground.loadFromFile("images/settings.png");
+	settingsButtonBackgroundHover.loadFromFile("images/settingsHover.png");
 	sf::Sprite background(menuBackground);
+	sf::Sprite settingsButton(settingsButtonBackground);
+	sf::Sprite settingsButtonHover(settingsButtonBackgroundHover);
+	settingsButton.setTextureRect(sf::IntRect(0, 0, 71, 71));
+	settingsButtonHover.setTextureRect(sf::IntRect(0, 0, 71, 71));
+
+	sf::Vector2i mousePos = sf::Mouse::getPosition();
 
 	background.setTextureRect(sf::IntRect(0, 0, window.getSize().x, window.getSize().y));
 	window.draw(background);
+
 	for (int i = 0; i < MAX_NUM_ITEMS; i++)
 		window.draw(menu[i]);
+
+	if (mousePos.x-window.getPosition().x <= 71 && mousePos.y-window.getPosition().y-31 <= 71 && mousePos.x - window.getPosition().x >= 0 && mousePos.y - window.getPosition().y - 31 >= 0)
+		window.draw(settingsButtonHover);
+	else
+		window.draw(settingsButton);
+
+	
 }
 void Menu::MoveUp() {
 	if (selectedItemIndex - 1 >= 0) {
