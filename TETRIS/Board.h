@@ -6,11 +6,15 @@
 #define COLS 15
 #define OFFSET_X 3
 #define OFFSET_Y 3
+struct block {
+	char value;
+	char color;
+};
 class Board
 {
 public:
 
-	int board[ROWS][COLS];
+	block board[ROWS][COLS];
 
 	Board(sf::RenderWindow &window);
 
@@ -19,8 +23,9 @@ public:
 	bool gameOver();
 	void clearLine(int &score);
 	void merge();
-	void Draw(sf::RenderWindow &window, sf::Vector2i nextPiece);
+	void Draw(sf::RenderWindow &window, sf::Vector3i nextPiece);
 
+	int firstRow;
 
 };
 

@@ -42,13 +42,7 @@ Menu::~Menu()
 void Menu::Draw(sf::RenderWindow &window) {
 	sf::Texture menuBackground, settingsButtonBackground, settingsButtonBackgroundHover;
 	menuBackground.loadFromFile("images/menuBg.jpg");
-	settingsButtonBackground.loadFromFile("images/settings.png");
-	settingsButtonBackgroundHover.loadFromFile("images/settingsHover.png");
 	sf::Sprite background(menuBackground);
-	sf::Sprite settingsButton(settingsButtonBackground);
-	sf::Sprite settingsButtonHover(settingsButtonBackgroundHover);
-	settingsButton.setTextureRect(sf::IntRect(0, 0, 71, 71));
-	settingsButtonHover.setTextureRect(sf::IntRect(0, 0, 71, 71));
 
 	sf::Vector2i mousePos = sf::Mouse::getPosition();
 
@@ -57,11 +51,6 @@ void Menu::Draw(sf::RenderWindow &window) {
 
 	for (int i = 0; i < MAX_NUM_ITEMS; i++)
 		window.draw(menu[i]);
-
-	if (mousePos.x-window.getPosition().x <= 71 && mousePos.y-window.getPosition().y-31 <= 71 && mousePos.x - window.getPosition().x >= 0 && mousePos.y - window.getPosition().y - 31 >= 0)
-		window.draw(settingsButtonHover);
-	else
-		window.draw(settingsButton);
 
 	
 }

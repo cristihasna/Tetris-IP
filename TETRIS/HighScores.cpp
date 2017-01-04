@@ -1,6 +1,5 @@
 #include "HighScores.h"
 #include <fstream>
-#include <cstring>
 
 #define customBlue sf::Color (134, 181, 225)
 #define customBlack sf::Color (55, 65, 64)
@@ -26,12 +25,6 @@ HighScores::HighScores(sf::RenderWindow &window)
 		selectedItem = 1;
 	}
 
-	/*int scoresNum;
-	fScores >> scoresNum;
-	char allScores[200];
-	fScores >> allScores;*/
-
-	
 
 
 }

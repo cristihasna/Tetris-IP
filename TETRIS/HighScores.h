@@ -2,7 +2,7 @@
 #include <SFML\Graphics.hpp>
 
 
-#define MAX_H_SCORES 15
+#define MAX_H_SCORES 5
 class HighScores
 {
 public:
@@ -17,9 +17,11 @@ private:
 	int selectedItem;
 
 public:
+
 	void Draw(sf::RenderWindow &window);
 	void MoveUp();
 	void MoveDown();
+
 
 	int getSelectedMenuItem() {
 		return selectedItem;

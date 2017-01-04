@@ -1,11 +1,13 @@
 #pragma once
 #include <SFML\Graphics.hpp>
 
-
+#define PU_NUM 3;
 
 class Pieces
 {
 public:
+
+	
 
 	// define pieces
 	char pieces[7 /*kind */][4 /* rotation */][5 /* rows */][5 /* cols */] =
@@ -287,6 +289,7 @@ public:
 	};
 
 
+	
 
 	Pieces(sf::RenderWindow &window);
 

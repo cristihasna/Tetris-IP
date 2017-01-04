@@ -11,10 +11,13 @@
 using namespace std;
 using namespace sf;
 
+
+
 int main() {
 
 
 	RenderWindow window(VideoMode(720, 480), "Tetris", Style::Close);
+	window.setMouseCursorVisible(false);
 	
 	Menu menu(window.getSize().x, window.getSize().y);
 	HighScores highScores(window);
@@ -24,10 +27,10 @@ int main() {
 
 	Clock clock;
 
-	time_t timp = time(NULL);
-	char timprezultat[100];
-	cout <<asctime(localtime( &timp ))<< endl;
+	//-----------------------
+	
 
+	//------------------------
 	float timer = 0;
 	bool isMenuActive = true,
 		isGameActive = false,
@@ -71,8 +74,10 @@ int main() {
 							isHighScoresActive = true;
 						}
 
-						else if (menu.getSelectedMenuItem() == 2)
+						else if (menu.getSelectedMenuItem() == 2) {
 							window.close();
+						}
+							
 					}
 				}
 
@@ -173,32 +178,41 @@ int main() {
 						board.merge();
 						board.clearLine(game.score);
 						if(!board.gameOver()) game.addPieceToBoard(board, pieces);
-						if (game.score >= 1500 && scoreChanged==0 ) {scoreChanged = 1;
+						if (game.score >= 500 && scoreChanged==0 ) {scoreChanged = 1;
 							game.delay /= 1.6;
+							game.generatePowerUp(board, pieces);
 							std::cout << "Delay : " << game.delay << " ScoreChanged: " << scoreChanged << std::endl;
 							
 						}
-						if (game.score >= 3000 && scoreChanged == 1) {
+						if (game.score >= 1000 && scoreChanged == 1) {
 							scoreChanged = 2;
 							game.delay/=1.3;
+
+							game.generatePowerUp(board, pieces);
 							std::cout << "Delay : " << game.delay << " ScoreChanged: " << scoreChanged << std::endl;
 							
 						}
-						if(game.score >= 5000 && scoreChanged == 2) {
+						if(game.score >= 1500 && scoreChanged == 2) {
 							scoreChanged = 3;
 							game.delay /= 1.3;
+
+							game.generatePowerUp(board, pieces);
 							std::cout << "Delay : " << game.delay << " ScoreChanged: " << scoreChanged << std::endl;
 							
 						}
-						if (game.score >= 7000 && scoreChanged == 3) {
+						if (game.score >= 2000 && scoreChanged == 3) {
 							scoreChanged = 4;
 							game.delay /= 1.3;
+
+							game.generatePowerUp(board, pieces);
 							std::cout << "Delay : " << game.delay << " ScoreChanged: " << scoreChanged << std::endl;
 
 						}
-						if (game.score >= 9000 && scoreChanged == 4) {
+						if (game.score >= 2500 && scoreChanged == 4) {
 							scoreChanged = 5;
 							game.delay /= 1.3;
+
+							game.generatePowerUp(board, pieces);
 							std::cout << "Delay : " << game.delay << " ScoreChanged: " << scoreChanged << std::endl;
 
 						}

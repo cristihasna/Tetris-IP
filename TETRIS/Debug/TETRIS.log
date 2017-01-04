@@ -1,11 +1,6 @@
-﻿  Source.cpp
-e:\onedrive\tools\homeworks\tetris\tetris\source.cpp(19): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
-e:\onedrive\tools\homeworks\tetris\tetris\source.cpp(177): warning C4305: '/=': truncation from 'double' to 'float'
-e:\onedrive\tools\homeworks\tetris\tetris\source.cpp(183): warning C4305: '/=': truncation from 'double' to 'float'
-e:\onedrive\tools\homeworks\tetris\tetris\source.cpp(189): warning C4305: '/=': truncation from 'double' to 'float'
-e:\onedrive\tools\homeworks\tetris\tetris\source.cpp(195): warning C4305: '/=': truncation from 'double' to 'float'
-e:\onedrive\tools\homeworks\tetris\tetris\source.cpp(201): warning C4305: '/=': truncation from 'double' to 'float'
-e:\onedrive\tools\homeworks\tetris\tetris\source.cpp(29): error C4996: 'asctime': This function or variable may be unsafe. Consider using asctime_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.10240.0\ucrt\time.h(116): note: see declaration of 'asctime'
-e:\onedrive\tools\homeworks\tetris\tetris\source.cpp(45): warning C4390: ';': empty controlled statement found; is this the intent?
-e:\onedrive\tools\homeworks\tetris\tetris\source.cpp(28): warning C4101: 'timprezultat': unreferenced local variable
+﻿  Board.cpp
+e:\onedrive\tools\homeworks\tetris\tetris\board.cpp(94): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+e:\onedrive\tools\homeworks\tetris\tetris\board.cpp(99): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+e:\onedrive\tools\homeworks\tetris\tetris\board.cpp(108): warning C4244: 'argument': conversion from 'int' to 'float', possible loss of data
+  TETRIS.vcxproj -> E:\OneDrive\tools\homeworks\TETRIS\Debug\TETRIS.exe
+  TETRIS.vcxproj -> E:\OneDrive\tools\homeworks\TETRIS\Debug\TETRIS.pdb (Partial PDB)

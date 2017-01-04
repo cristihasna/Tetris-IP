@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <cstring>
+#include <stdlib.h>
 
 Game::Game(sf::RenderWindow &window)
 {
@@ -18,12 +19,14 @@ void Game::addPieceToBoard(Board &Board, Pieces Pieces) {
 		nextPiece = Game::generatePiece(Pieces);
 	sf::Vector2i initialPos = Pieces.getInitialPosition(actualPiece.x, actualPiece.y);
 	for (int i = 0; i < 5-initialPos.x; i++) {
-		for (int j = 0, j2 = (COLS - 5) / 2+ initialPos.y; j < 5-initialPos.y; j++, j2++) {
-			if (Pieces.pieces[actualPiece.x][actualPiece.y][i+initialPos.x][j+initialPos.y] == 1 || Pieces.pieces[actualPiece.x][actualPiece.y][i + initialPos.x][j + initialPos.y] == 2 && Board.board[i][j2] == 0)
-				Board.board[i][j2] = Pieces.pieces[actualPiece.x][actualPiece.y][i+initialPos.x][j+initialPos.y];
+		for (int j = 0, j2 = (COLS - 5) / 2 + initialPos.y; j < 5-initialPos.y; j++, j2++) {
+			if (Pieces.pieces[actualPiece.x][actualPiece.y][i + initialPos.x][j + initialPos.y] == 1 || Pieces.pieces[actualPiece.x][actualPiece.y][i + initialPos.x][j + initialPos.y] == 2 && Board.board[i][j2].value == 0) {
+				Board.board[i][j2].value = Pieces.pieces[actualPiece.x][actualPiece.y][i + initialPos.x][j + initialPos.y];
+				Board.board[i][j2].color = actualPiece.z;
+			}
 		}
 	}
-	nextPiece = Game::generatePiece(Pieces);
+	//nextPiece = Game::generatePiece(Pieces);
 }
 void Game::init(Board &Board, Pieces Pieces) {
 	Board.init();
@@ -33,25 +36,28 @@ void Game::init(Board &Board, Pieces Pieces) {
 	Game::secondsElapsed = 0;
 	Game::score = 0;
 	Game::delay = 0.7;
+	Game::generatePowerUp(Board, Pieces);
 }
-sf::Vector2i Game::generatePiece(Pieces Pieces) {
+sf::Vector3i Game::generatePiece(Pieces Pieces) {
 	srand(time(NULL));
 	int piece = rand() % 7;
 	int rotation = rand() % 4;
-	sf::Vector2i result;
+	int color = rand() % 4;
+	sf::Vector3i result;
 	result.x = piece;
 	result.y = rotation;
+	result.z = color;
 	return result;
 }
 
 bool Game::checkDown(Board &Board) {
 	for (int i = 0; i < ROWS; i++) {
 		for (int j = 0; j < COLS; j++) {
-			if (Board.board[i][j] == 1 || Board.board[i][j] == 2) {
+			if (Board.board[i][j].value == 1 || Board.board[i][j].value == 2) {
 				if (i == ROWS - 1) {
 					return false;
 				}
-				else if (Board.board[i+1][j]==3) {
+				else if (Board.board[i+1][j].value==3) {
 					return false;
 				}
 			}
@@ -62,11 +68,11 @@ bool Game::checkDown(Board &Board) {
 bool Game::checkLeft(Board &Board) {
 	for (int i = 0; i < ROWS; i++) {
 		for (int j = 0; j < COLS; j++) {
-			if (Board.board[i][j] == 1 || Board.board[i][j] == 2) {
+			if (Board.board[i][j].value == 1 || Board.board[i][j].value == 2) {
 				if (j == 0) {
 					return false;
 				}
-				else if (Board.board[i][j-1] == 3) {
+				else if (Board.board[i][j-1].value == 3) {
 					return false;
 				}
 			}
@@ -77,11 +83,11 @@ bool Game::checkLeft(Board &Board) {
 bool Game::checkRight(Board &Board) {
 	for (int i = 0; i < ROWS; i++) {
 		for (int j = 0; j < COLS; j++) {
-			if (Board.board[i][j] == 1 || Board.board[i][j] == 2) {
+			if (Board.board[i][j].value == 1 || Board.board[i][j].value == 2) {
 				if (j == COLS - 1) {
 					return false;
 				}
-				else if (Board.board[i][j+1] == 3) {
+				else if (Board.board[i][j+1].value == 3) {
 					return false;
 				}
 			}
@@ -89,11 +95,11 @@ bool Game::checkRight(Board &Board) {
 	}
 	return true;
 }
-bool Game::checkRotate(Board &Board, Pieces Pieces, sf::Vector2i piece) {
+bool Game::checkRotate(Board &Board, Pieces Pieces, sf::Vector3i piece) {
 	int pivotX=0, pivotY=0;
 	for (int i = 0; i < ROWS && (pivotX==0 && pivotY == 0); i++) {
 		for(int j=0;j<COLS && (pivotX == 0 && pivotY == 0); j++)
-			if (Board.board[i][j] == 2) {
+			if (Board.board[i][j].value == 2) {
 				pivotX = j;
 				pivotY = i;
 			}
@@ -101,7 +107,7 @@ bool Game::checkRotate(Board &Board, Pieces Pieces, sf::Vector2i piece) {
 	int nextRotation = (piece.y + 1)%4;
 	for (int i = pivotY - 2, iP = 0; i <= pivotY + 2; i++, iP++)
 		for (int j = pivotX - 2, jP = 0; j <= pivotX + 2; j++, jP++)
-			if ((i>=ROWS || j>=COLS || j <0 || i<0 || Board.board[i][j]== 3) && (Pieces.pieces[piece.x][nextRotation][iP][jP] == 1 || Pieces.pieces[piece.x][nextRotation][iP][jP] == 2))
+			if ((i>=ROWS || j>=COLS || j <0 || i<0 || Board.board[i][j].value== 3) && (Pieces.pieces[piece.x][nextRotation][iP][jP] == 1 || Pieces.pieces[piece.x][nextRotation][iP][jP] == 2))
 				return false;
 	return true;
 }
@@ -109,35 +115,58 @@ bool Game::checkRotate(Board &Board, Pieces Pieces, sf::Vector2i piece) {
 void Game::moveDown(Board &Board) {
 	for (int i = ROWS - 1; i >= 0; i--)
 		for (int j = 0; j < COLS; j++)
-			if (Board.board[i - 1][j] == 1 || Board.board[i - 1][j] == 2 || Board.board[i][j] == 1 || Board.board[i][j] == 2)
+			if (Board.board[i - 1][j].value == 1 || Board.board[i - 1][j].value == 2 || Board.board[i][j].value == 1 || Board.board[i][j].value == 2)
 			{
-				if (i == 0 || Board.board[i-1][j]==3) Board.board[i][j] = 0;
+				if (Board.board[i][j].value == 4 || Board.board[i][j].value == 5 || Board.board[i][j].value == 6) {
+					Game::collectedPU = Board.board[i][j].value;
+					std::cout << "am schimbat collectedPU cu " << Game::collectedPU << std::endl;
+				}
+				if (i == 0 || Board.board[i - 1][j].value == 3 || Board.board[i - 1][j].value == 4 || Board.board[i - 1][j].value == 5 || Board.board[i - 1][j].value == 6) {
+					
+					Board.board[i][j].value = 0;
+					Board.board[i][j].color = 0;
+				}
 				else Board.board[i][j] = Board.board[i - 1][j];
 			}
 }
 void Game::moveRight(Board &Board) {
 	for (int i = 0; i <ROWS; i++)
 		for (int j = COLS - 1; j >= 0; j--)
-			if (Board.board[i][j-1] == 1 || Board.board[i][j-1] == 2 || Board.board[i][j] == 1 || Board.board[i][j] == 2)
+			if (Board.board[i][j-1].value == 1 || Board.board[i][j-1].value == 2 || Board.board[i][j].value == 1 || Board.board[i][j].value == 2)
 			{
-				if (j == 0 || Board.board[i][j - 1] == 3) Board.board[i][j] = 0;
+				if (Board.board[i][j].value == 4 || Board.board[i][j].value == 5 || Board.board[i][j].value == 6) {
+					Game::collectedPU = Board.board[i][j].value;
+					std::cout << "am schimbat collectedPU cu " << Game::collectedPU << std::endl;
+				}
+				if (j == 0 || Board.board[i][j - 1].value == 3 || Board.board[i][j - 1].value == 4 || Board.board[i][j - 1].value == 5 || Board.board[i][j - 1].value == 6) {
+
+					Board.board[i][j].value = 0;
+					Board.board[i][j].color = 0;
+				}
 				else Board.board[i][j] = Board.board[i][j-1];
 			}
 }
 void Game::moveLeft(Board &Board) {
 	for (int i = 0; i <ROWS; i++)
 		for (int j = 0; j < COLS; j++)
-			if (Board.board[i][j + 1] == 1 || Board.board[i][j + 1] == 2 || Board.board[i][j] == 1 || Board.board[i][j] == 2)
+			if (Board.board[i][j + 1].value == 1 || Board.board[i][j + 1].value == 2 || Board.board[i][j].value == 1 || Board.board[i][j].value == 2)
 			{
-				if (j == COLS-1 || Board.board[i][j + 1]==3) Board.board[i][j] = 0;
+				if (Board.board[i][j].value == 4 || Board.board[i][j].value == 5 || Board.board[i][j].value == 6) {
+					Game::collectedPU = Board.board[i][j].value;
+					std::cout << "am schimbat collectedPU cu " << Game::collectedPU << std::endl;
+				}
+				if (j == COLS - 1 || Board.board[i][j + 1].value == 3 || Board.board[i][j + 1].value == 4 || Board.board[i][j + 1].value == 5 || Board.board[i][j + 1].value == 6) {
+					Board.board[i][j].value = 0;
+					Board.board[i][j].color = 0;
+				}
 				else Board.board[i][j] = Board.board[i][j + 1];
 			}
 }
-void Game::Rotate(Board &Board, Pieces Pieces, sf::Vector2i &piece) {
+void Game::Rotate(Board &Board, Pieces Pieces, sf::Vector3i &piece) {
 	int pivotX = 0, pivotY = 0;
 	for (int i = 0; i < ROWS && (pivotX == 0 && pivotY == 0); i++) {
 		for (int j = 0; j<COLS && (pivotX == 0 && pivotY == 0); j++)
-			if (Board.board[i][j] == 2) {
+			if (Board.board[i][j].value == 2) {
 				pivotX = j;
 				pivotY = i;
 			}
@@ -146,8 +175,17 @@ void Game::Rotate(Board &Board, Pieces Pieces, sf::Vector2i &piece) {
 	for (int i = pivotY - 2, iP = 0; i <= pivotY + 2; i++, iP++)
 		for (int j = pivotX - 2, jP = 0; j <= pivotX + 2; j++, jP++)
 		{
-			if (Board.board[i][j] != 3)
-				Board.board[i][j] = Pieces.pieces[piece.x][piece.y][iP][jP];
+			if ((Pieces.pieces[piece.x][piece.y][iP][jP]==1 || Pieces.pieces[piece.x][piece.y][iP][jP] == 2) && (Board.board[i][j].value == 4 || Board.board[i][j].value == 5 || Board.board[i][j].value == 6 )) {
+				Game::collectedPU = Board.board[i][j].value;
+				std::cout << "am schimbat collectedPU cu " << Game::collectedPU << std::endl;
+			}
+			if (Board.board[i][j].value != 3) {
+				Board.board[i][j].value = Pieces.pieces[piece.x][piece.y][iP][jP];
+				if (Pieces.pieces[piece.x][piece.y][iP][jP] != 0)
+					Board.board[i][j].color = piece.z;
+				else Board.board[i][j].color = 0;
+			}
+				
 		}
 }
 void Game::drawInfo(sf::RenderWindow &window) {
@@ -188,4 +226,19 @@ void Game::drawGameOver(sf::RenderWindow &window) {
 	sf::Sprite goSprite(goBackground);
 	goSprite.setTextureRect(sf::IntRect(0, 0, 720, 480));
 	window.draw(goSprite);
+}
+void Game::generatePowerUp(Board &Board, Pieces Pieces) {
+	int powerUps[3] = { 4 , 5, 6};
+	int puX = rand() % COLS;
+	int puY = rand() % (Board.firstRow+1);
+
+	int puIndex = rand() % 2;
+
+	for (int i = 0; i < 3; i++)
+		std::cout << (int)powerUps[i] << " ";
+	std::cout << std::endl;
+
+	Board.board[puY][puX].value = powerUps[puIndex];
+	std::cout << (int)powerUps[puIndex] << std::endl;
+	std::cout << "am pus " << (int)powerUps[puIndex] << " pe " << puY << " / " << puX << std::endl;
 }
