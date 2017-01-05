@@ -36,7 +36,6 @@ void Game::init(Board &Board, Pieces Pieces) {
 	Game::secondsElapsed = 0;
 	Game::score = 0;
 	Game::delay = 0.7;
-	Game::generatePowerUp(Board, Pieces);
 }
 sf::Vector3i Game::generatePiece(Pieces Pieces) {
 	srand(time(NULL));

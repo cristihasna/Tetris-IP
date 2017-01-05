@@ -17,7 +17,7 @@ int main() {
 
 
 	RenderWindow window(VideoMode(720, 480), "Tetris", Style::Close);
-	window.setMouseCursorVisible(false);
+	//window.setMouseCursorVisible(false);
 	
 	Menu menu(window.getSize().x, window.getSize().y);
 	HighScores highScores(window);
@@ -27,28 +27,28 @@ int main() {
 
 	Clock clock;
 
-	//-----------------------
-	
-
-	//------------------------
 	float timer = 0;
 	bool isMenuActive = true,
 		isGameActive = false,
-		isHighScoresActive = false;
+		isHighScoresActive = false,
+		scoreProcessed = false;
 
 	int scoreChanged = 0;
 	while (window.isOpen()) {
 		
 		Event e;
 		while (window.pollEvent(e)) {
-			if (isMenuActive) {
-				if (e.type == Event::MouseButtonPressed) {
-					if (e.key.code == sf::Mouse::Button::Left) {
-						sf::Vector2i mousePos= sf::Mouse::getPosition();
-						if (mousePos.x - window.getPosition().x <= 71 && mousePos.y - window.getPosition().y - 31 <= 71 && mousePos.x - window.getPosition().x >= 0 && mousePos.y - window.getPosition().y - 31 >= 0);
-							
-					}
+
+			if (e.type == Event::MouseButtonPressed) {
+				if (e.key.code == sf::Mouse::Button::Left) {
+					sf::Vector2i mousePos = sf::Mouse::getPosition();
+					cout << "clicked pe pozitia " << mousePos.x << " / " << mousePos.y << endl;
+
 				}
+			}
+
+
+			if (isMenuActive) {
 				if (e.type == Event::KeyPressed) {
 
 					if (e.key.code == Keyboard::Up)
@@ -64,6 +64,7 @@ int main() {
 							isMenuActive = false;
 							game.init(board, pieces);
 							scoreChanged = 0;
+							scoreProcessed = false;
 							clock.restart();
 
 						}
@@ -72,6 +73,7 @@ int main() {
 							cout << "High Scores" << endl;
 							isMenuActive = false;
 							isHighScoresActive = true;
+							highScores.readHighScores(highScores.highScores);
 						}
 
 						else if (menu.getSelectedMenuItem() == 2) {
@@ -91,8 +93,10 @@ int main() {
 						highScores.MoveDown();
 					if (e.key.code == Keyboard::Return) {
 						if (highScores.getSelectedMenuItem() == 0) {
-							//highScores.resetScores();
+							highScores.resetScores(highScores.highScores);
 							cout << "am sters scorurile" << endl;
+							isHighScoresActive = false;
+							isMenuActive = true;
 						}
 						if (highScores.getSelectedMenuItem() == 1) {
 							highScores.MoveUp();
@@ -110,8 +114,14 @@ int main() {
 						cout << "am apasat esc" << endl;
 						isGameActive = false;
 						isMenuActive = true;
+						char timestamp[100] = "__";
+
+						if (!scoreProcessed) {
+							highScores.processScore(game.score, game.minutesElapsed, game.secondsElapsed, timestamp, highScores.highScores);
+							scoreProcessed = true;
+						}
 					}
-					else if (!board.gameOver() && game.score <= 9999) {
+					else if (!board.gameOver()) {
 
 						if (e.key.code == Keyboard::Left) {
 							if (game.checkLeft(board)) {
@@ -158,7 +168,7 @@ int main() {
 			float time = clock.getElapsedTime().asSeconds();
 			clock.restart();
 			timer += time;
-			if (!board.gameOver() && game.score<=9999) {
+			if (!board.gameOver()) {
 				game.secondsElapsed += time;
 				if (game.secondsElapsed >= 60) {
 					game.secondsElapsed = 0;
@@ -166,7 +176,7 @@ int main() {
 				}
 			}
 			
-			if(!board.gameOver() && game.score < 9999) {
+			if(!board.gameOver()) {
 				if(game.checkDown(board)) {
 					if (timer > game.delay) {
 						timer = 0;
@@ -223,7 +233,7 @@ int main() {
 
 		}
 
-		window.clear(Color::Black);
+		window.clear(Color::White);
 
 		if (isMenuActive) 
 			menu.Draw(window);
@@ -233,6 +243,12 @@ int main() {
 			board.Draw(window, game.nextPiece);
 			game.drawInfo(window);
 			if (board.gameOver()) {
+				if (!scoreProcessed) {
+					cout << "intra aici " << endl;
+					scoreProcessed = true;
+					char timestamp[100] = "__";
+					highScores.processScore(game.score, game.minutesElapsed, game.secondsElapsed, timestamp, highScores.highScores);
+				}
 				game.drawGameOver(window);
 			}
 
