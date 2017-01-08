@@ -15,9 +15,12 @@ using namespace sf;
 
 int main() {
 
-
+	float x;
+	x = 0;
+	cout << (int)x << endl;
 	RenderWindow window(VideoMode(720, 480), "Tetris", Style::Close);
 	//window.setMouseCursorVisible(false);
+	window.setFramerateLimit(15);
 	
 	Menu menu(window.getSize().x, window.getSize().y);
 	HighScores highScores(window);
@@ -31,9 +34,11 @@ int main() {
 	bool isMenuActive = true,
 		isGameActive = false,
 		isHighScoresActive = false,
+		isGamePaused = false,
 		scoreProcessed = false;
 
 	int scoreChanged = 0;
+
 	while (window.isOpen()) {
 		
 		Event e;
@@ -110,49 +115,61 @@ int main() {
 			}
 			else if (isGameActive) {
 				if (e.type == Event::KeyPressed) {
-					if (e.key.code == Keyboard::Escape) {
-						cout << "am apasat esc" << endl;
-						isGameActive = false;
-						isMenuActive = true;
-						char timestamp[100] = "__";
+					if (isGamePaused) {
+						if (e.key.code == Keyboard::Escape) {
+							cout << "am apasat esc" << endl;
+							isGamePaused = false;
+						}
+						if (e.key.code == Keyboard::Return) {
+							cout << "am apasat ender" << endl;
+							isGamePaused = false;
+							isGameActive = false;
+							isMenuActive = true;
 
-						if (!scoreProcessed) {
-							highScores.processScore(game.score, game.minutesElapsed, game.secondsElapsed, timestamp, highScores.highScores);
-							scoreProcessed = true;
+							if (!scoreProcessed) {
+								highScores.processScore(game.score, game.minutesElapsed, game.secondsElapsed, highScores.highScores);
+								scoreProcessed = true;
+							}
 						}
 					}
-					else if (!board.gameOver()) {
+					else {
+						if (e.key.code == Keyboard::Escape) {
+							cout << "am apasat esc" << endl;
+							isGamePaused = true;
+						}
+						else if (!board.gameOver() && !isGamePaused) {
 
-						if (e.key.code == Keyboard::Left) {
-							if (game.checkLeft(board)) {
-								game.moveLeft(board);
-								timer = 0;
+							if (e.key.code == Keyboard::Left) {
+								if (game.checkLeft(board)) {
+									game.moveLeft(board);
+									timer = 0;
+								}
 							}
-						}
-						if (e.key.code == Keyboard::Right) {
-							if (game.checkRight(board)) {
-								game.moveRight(board);
-								timer = 0;
+							if (e.key.code == Keyboard::Right) {
+								if (game.checkRight(board)) {
+									game.moveRight(board);
+									timer = 0;
+								}
 							}
-						}
 
-						if (e.key.code == Keyboard::Down) {
-							if (game.checkDown(board)) {
-								game.moveDown(board);
+							if (e.key.code == Keyboard::Down) {
+								if (game.checkDown(board)) {
+									game.moveDown(board);
+									timer = 0;
+								}
+							}
+							if (e.key.code == Keyboard::Up) {
+								if (game.checkRotate(board, pieces, game.actualPiece)) {
+									game.Rotate(board, pieces, game.actualPiece);
+									timer = 0;
+								}
+							}
+							if (e.key.code == Keyboard::Space) {
+								while (game.checkDown(board)) {
+									game.moveDown(board);
+								}
 								timer = 0;
 							}
-						}
-						if (e.key.code == Keyboard::Up) {
-							if (game.checkRotate(board, pieces, game.actualPiece)) {
-								game.Rotate(board, pieces, game.actualPiece);
-								timer = 0;
-							}
-						}
-						if (e.key.code == Keyboard::Space) {
-							while (game.checkDown(board)) {
-								game.moveDown(board);
-							}
-							timer = 0;
 						}
 					}
 					
@@ -168,7 +185,7 @@ int main() {
 			float time = clock.getElapsedTime().asSeconds();
 			clock.restart();
 			timer += time;
-			if (!board.gameOver()) {
+			if (!board.gameOver() && !isGamePaused) {
 				game.secondsElapsed += time;
 				if (game.secondsElapsed >= 60) {
 					game.secondsElapsed = 0;
@@ -176,7 +193,7 @@ int main() {
 				}
 			}
 			
-			if(!board.gameOver()) {
+			if(!board.gameOver() && !isGamePaused) {
 				if(game.checkDown(board)) {
 					if (timer > game.delay) {
 						timer = 0;
@@ -242,12 +259,21 @@ int main() {
 
 			board.Draw(window, game.nextPiece);
 			game.drawInfo(window);
+
+			if (isGamePaused) {
+				sf::Texture pausedGameBg;
+				pausedGameBg.loadFromFile("images/gamePaused.png");
+				sf::Sprite pausedGame(pausedGameBg);
+				pausedGame.setTextureRect(sf::IntRect(0, 0, window.getSize().x, window.getSize().y));
+				window.draw(pausedGame);
+			}
+
 			if (board.gameOver()) {
 				if (!scoreProcessed) {
 					cout << "intra aici " << endl;
 					scoreProcessed = true;
 					char timestamp[100] = "__";
-					highScores.processScore(game.score, game.minutesElapsed, game.secondsElapsed, timestamp, highScores.highScores);
+					highScores.processScore(game.score, game.minutesElapsed, game.secondsElapsed, highScores.highScores);
 				}
 				game.drawGameOver(window);
 			}
@@ -258,6 +284,7 @@ int main() {
 		}
 				
 		window.display();
+		sf::Time sleepTime;
 	}
 
 	return 0;

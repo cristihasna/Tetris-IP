@@ -27,7 +27,7 @@ public:
 	void Draw(sf::RenderWindow &window);
 	void MoveUp();
 	void MoveDown();
-	void processScore(int score, float minutesElapsed, float secondsElapsed, char timestamp[100], Score highScores[MAX_H_SCORES]);
+	void processScore(int score, float minutesElapsed, float secondsElapsed, Score highScores[MAX_H_SCORES]);
 	void readHighScores(Score highScores[MAX_H_SCORES]);
 	void transformHighScores(Score highScores[MAX_H_SCORES]);
 	void saveScore(Score highScores[MAX_H_SCORES]);
