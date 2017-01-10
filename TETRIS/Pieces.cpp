@@ -17,8 +17,8 @@ bool Pieces::getBlockType(int piece, int rotation, int x, int y) {
 }
 sf::Vector2i Pieces::getInitialPosition(int piece, int rotation) {
 	sf::Vector2i result;
-	result.x = piecesInitialPosition[piece][rotation][0];
-	result.y = piecesInitialPosition[piece][rotation][1];
+	result.x = Pieces::piecesInitialPosition[piece][rotation][0];
+	result.y = Pieces::piecesInitialPosition[piece][rotation][1];
 	
 	return result;
 }

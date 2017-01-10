@@ -22,13 +22,12 @@ public:
 	void Rotate(Board &Board, Pieces Pieces, sf::Vector3i &piece);
 	void drawInfo(sf::RenderWindow &window);
 	void drawGameOver(sf::RenderWindow &window);
-
 	void generatePowerUp(Board &Board, Pieces Pieces);
 
 public:
 	sf::Vector3i actualPiece;
 	sf::Vector3i nextPiece;
-	float minutesElapsed, secondsElapsed, delay;
+	float minutesElapsed, secondsElapsed, delay, powerUpActiveTime, powerUpTimer;
 	int score, speed;
 	char collectedPU = 0;
 };

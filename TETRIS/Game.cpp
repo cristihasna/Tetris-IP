@@ -15,30 +15,47 @@ Game::~Game()
 {
 }
 void Game::addPieceToBoard(Board &Board, Pieces Pieces) {
-		actualPiece = nextPiece;
-		nextPiece = Game::generatePiece(Pieces);
+
+	actualPiece = nextPiece;
+	nextPiece = Game::generatePiece(Pieces);
+
 	sf::Vector2i initialPos = Pieces.getInitialPosition(actualPiece.x, actualPiece.y);
+
+	std::cout << "Piesa care trebuie adaugata: " << actualPiece.x << " " << actualPiece.y << " cu pozitia initiala "<<initialPos.x<<" "<<initialPos.y<< std::endl;
+	std::cout << "Piesa urmatoare: " << nextPiece.x << " " << nextPiece.y << std::endl;
 	for (int i = 0; i < 5-initialPos.x; i++) {
 		for (int j = 0, j2 = (COLS - 5) / 2 + initialPos.y; j < 5-initialPos.y; j++, j2++) {
-			if (Pieces.pieces[actualPiece.x][actualPiece.y][i + initialPos.x][j + initialPos.y] == 1 || Pieces.pieces[actualPiece.x][actualPiece.y][i + initialPos.x][j + initialPos.y] == 2 && Board.board[i][j2].value == 0) {
+			std::cout << Pieces.pieces[actualPiece.x][actualPiece.y][i + initialPos.x][j + initialPos.y] << " ";
+			if ((Pieces.pieces[actualPiece.x][actualPiece.y][i + initialPos.x][j + initialPos.y] == 1 || Pieces.pieces[actualPiece.x][actualPiece.y][i + initialPos.x][j + initialPos.y] == 2) && Board.board[i][j2].value == 0) {
 				Board.board[i][j2].value = Pieces.pieces[actualPiece.x][actualPiece.y][i + initialPos.x][j + initialPos.y];
 				Board.board[i][j2].color = actualPiece.z;
 			}
 		}
+		std::cout << std::endl;
 	}
-	//nextPiece = Game::generatePiece(Pieces);
+	std::cout << "----------------" << std::endl;
+	for (int i = 0; i < ROWS; i++)
+	{
+		for (int j = 0; j < COLS; j++)
+			std::cout << Board.board[i][j].value << " ";
+		std::cout << std::endl;
+	}
 }
 void Game::init(Board &Board, Pieces Pieces) {
+	srand(time(NULL));
 	Board.init();
-	sf::Vector2i initialPosition = Pieces.getInitialPosition(actualPiece.x, actualPiece.y);
+	Game::nextPiece = Game::generatePiece(Pieces);
 	Game::addPieceToBoard(Board, Pieces);
 	Game::minutesElapsed = 0;
 	Game::secondsElapsed = 0;
 	Game::score = 0;
 	Game::delay = 0.7;
+	Game::powerUpActiveTime = 10;
+	Game::powerUpTimer = 0;
+	Game::collectedPU = 0;
+	Game::generatePowerUp(Board, Pieces);
 }
 sf::Vector3i Game::generatePiece(Pieces Pieces) {
-	srand(time(NULL));
 	int piece = rand() % 7;
 	int rotation = rand() % 4;
 	int color = rand() % 4;
@@ -118,6 +135,7 @@ void Game::moveDown(Board &Board) {
 			{
 				if (Board.board[i][j].value == 4 || Board.board[i][j].value == 5 || Board.board[i][j].value == 6) {
 					Game::collectedPU = Board.board[i][j].value;
+					Game::powerUpTimer = 0;
 					std::cout << "am schimbat collectedPU cu " << Game::collectedPU << std::endl;
 				}
 				if (i == 0 || Board.board[i - 1][j].value == 3 || Board.board[i - 1][j].value == 4 || Board.board[i - 1][j].value == 5 || Board.board[i - 1][j].value == 6) {
@@ -135,6 +153,7 @@ void Game::moveRight(Board &Board) {
 			{
 				if (Board.board[i][j].value == 4 || Board.board[i][j].value == 5 || Board.board[i][j].value == 6) {
 					Game::collectedPU = Board.board[i][j].value;
+					Game::powerUpTimer = 0;
 					std::cout << "am schimbat collectedPU cu " << Game::collectedPU << std::endl;
 				}
 				if (j == 0 || Board.board[i][j - 1].value == 3 || Board.board[i][j - 1].value == 4 || Board.board[i][j - 1].value == 5 || Board.board[i][j - 1].value == 6) {
@@ -152,6 +171,7 @@ void Game::moveLeft(Board &Board) {
 			{
 				if (Board.board[i][j].value == 4 || Board.board[i][j].value == 5 || Board.board[i][j].value == 6) {
 					Game::collectedPU = Board.board[i][j].value;
+					Game::powerUpTimer = 0;
 					std::cout << "am schimbat collectedPU cu " << Game::collectedPU << std::endl;
 				}
 				if (j == COLS - 1 || Board.board[i][j + 1].value == 3 || Board.board[i][j + 1].value == 4 || Board.board[i][j + 1].value == 5 || Board.board[i][j + 1].value == 6) {
@@ -174,17 +194,18 @@ void Game::Rotate(Board &Board, Pieces Pieces, sf::Vector3i &piece) {
 	for (int i = pivotY - 2, iP = 0; i <= pivotY + 2; i++, iP++)
 		for (int j = pivotX - 2, jP = 0; j <= pivotX + 2; j++, jP++)
 		{
-			if ((Pieces.pieces[piece.x][piece.y][iP][jP]==1 || Pieces.pieces[piece.x][piece.y][iP][jP] == 2) && (Board.board[i][j].value == 4 || Board.board[i][j].value == 5 || Board.board[i][j].value == 6 )) {
-				Game::collectedPU = Board.board[i][j].value;
-				std::cout << "am schimbat collectedPU cu " << Game::collectedPU << std::endl;
-			}
-			if (Board.board[i][j].value != 3) {
+			if (Board.board[i][j].value != 3 && Board.board[i][j].value != 4 && Board.board[i][j].value != 5) {
 				Board.board[i][j].value = Pieces.pieces[piece.x][piece.y][iP][jP];
-				if (Pieces.pieces[piece.x][piece.y][iP][jP] != 0)
-					Board.board[i][j].color = piece.z;
-				else Board.board[i][j].color = 0;
+				Board.board[i][j].color = piece.z;
 			}
-				
+			else if((Board.board[i][j].value==4 || Board.board[i][j].value==5)&&(Pieces.pieces[piece.x][piece.y][iP][jP]==1 || Pieces.pieces[piece.x][piece.y][iP][jP] == 2)){
+				Game::collectedPU = Board.board[i][j].value;
+				std::cout << (int)Game::collectedPU << std::endl;
+				Game::powerUpTimer = 0;
+				std::cout << "am schimbat powerUp" << std::endl;
+				Board.board[i][j].value = Pieces.pieces[piece.x][piece.y][iP][jP];
+				Board.board[i][j].color = piece.z;
+			}
 		}
 }
 void Game::drawInfo(sf::RenderWindow &window) {
@@ -218,6 +239,15 @@ void Game::drawInfo(sf::RenderWindow &window) {
 
 	for(int i=0;i<3;i++)
 	window.draw(gameInfo[i]);
+
+	if (Game::collectedPU == 4) {
+		sf::Texture activePowerUpTexture;
+		activePowerUpTexture.loadFromFile("images/tiles.png");
+		sf::Sprite activePowerUp(activePowerUpTexture);
+		activePowerUp.setTextureRect(sf::IntRect(Game::collectedPU % 4 * 18, 0, 18, 18));
+		activePowerUp.setPosition(sf::Vector2f((OFFSET_X + COLS + 1) * 18 + 3, (OFFSET_Y + ROWS - 1) * 18));
+		window.draw(activePowerUp);
+	}
 }
 void Game::drawGameOver(sf::RenderWindow &window) {
 	sf::Texture goBackground;
@@ -227,9 +257,15 @@ void Game::drawGameOver(sf::RenderWindow &window) {
 	window.draw(goSprite);
 }
 void Game::generatePowerUp(Board &Board, Pieces Pieces) {
+
 	int powerUps[3] = { 4 , 5, 6};
-	int puX = rand() % COLS;
-	int puY = rand() % (Board.firstRow+1);
+	int puX = rand() % COLS, puY;
+	std::cout << "firstRow: " << Board.firstRow << std::endl;
+	if(Board.firstRow>=4)
+		puY = rand() % Board.firstRow>=4? rand() % Board.firstRow:4;
+	else
+		puY = rand() % Board.firstRow;
+
 
 	int puIndex = rand() % 2;
 
@@ -238,6 +274,6 @@ void Game::generatePowerUp(Board &Board, Pieces Pieces) {
 	std::cout << std::endl;
 
 	Board.board[puY][puX].value = powerUps[puIndex];
-	std::cout << (int)powerUps[puIndex] << std::endl;
 	std::cout << "am pus " << (int)powerUps[puIndex] << " pe " << puY << " / " << puX << std::endl;
+
 }

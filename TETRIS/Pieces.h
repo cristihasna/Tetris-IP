@@ -233,9 +233,7 @@ public:
 		}
 	};
 
-
-	// initial position
-	int piecesInitialPosition[7 /*kind */][4 /* rotation */][2 /* position */] =
+	char piecesInitialPosition[7 /*kind */][4 /* rotation */][2 /* position */] =
 	{
 		/* Square */
 		{
@@ -285,7 +283,7 @@ public:
 			{ 2, 1 },
 			{ 1, 1 },
 			{ 1, 1 }
-		},
+		}
 	};
 
 

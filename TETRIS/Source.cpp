@@ -15,18 +15,26 @@ using namespace sf;
 
 int main() {
 
-	float x;
-	x = 0;
-	cout << (int)x << endl;
+	
 	RenderWindow window(VideoMode(720, 480), "Tetris", Style::Close);
-	//window.setMouseCursorVisible(false);
-	window.setFramerateLimit(15);
+	window.setMouseCursorVisible(false);
 	
 	Menu menu(window.getSize().x, window.getSize().y);
 	HighScores highScores(window);
 	Board board(window);
 	Pieces pieces(window);
 	Game game(window);
+
+	for (int i = 0; i < 4; i++)
+		cout << pieces.piecesInitialPosition[6][i][0] << " " << pieces.piecesInitialPosition[6][i][1] << endl;
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 5; j++) {
+			for (int p = 0; p < 5; p++)
+				cout << (int)pieces.pieces[6][i][j][p] << " ";
+			cout << endl;
+		}
+		cout << "-------------" << endl;
+	}
 
 	Clock clock;
 
@@ -71,7 +79,6 @@ int main() {
 							scoreChanged = 0;
 							scoreProcessed = false;
 							clock.restart();
-
 						}
 
 						else if (menu.getSelectedMenuItem() == 1) {
@@ -135,20 +142,48 @@ int main() {
 					else {
 						if (e.key.code == Keyboard::Escape) {
 							cout << "am apasat esc" << endl;
-							isGamePaused = true;
+							if (board.gameOver()) {
+
+								isGamePaused = false;
+								isGameActive = false;
+								isMenuActive = true;
+
+								if (!scoreProcessed) {
+									highScores.processScore(game.score, game.minutesElapsed, game.secondsElapsed, highScores.highScores);
+									scoreProcessed = true;
+								}
+							}
+							else isGamePaused = true;
 						}
 						else if (!board.gameOver() && !isGamePaused) {
 
+
 							if (e.key.code == Keyboard::Left) {
-								if (game.checkLeft(board)) {
-									game.moveLeft(board);
-									timer = 0;
+								if (game.collectedPU != 4) {
+									if (game.checkLeft(board)) {
+										game.moveLeft(board);
+										timer = 0;
+									}
+								}
+								else {
+									if (game.checkRight(board)) {
+										game.moveRight(board);
+										timer = 0;
+									}
 								}
 							}
 							if (e.key.code == Keyboard::Right) {
-								if (game.checkRight(board)) {
-									game.moveRight(board);
-									timer = 0;
+								if (game.collectedPU != 4){
+									if (game.checkRight(board)) {
+										game.moveRight(board);
+										timer = 0;
+									}
+								}
+								else  {
+									if (game.checkLeft(board)) {
+										game.moveLeft(board);
+										timer = 0;
+									}
 								}
 							}
 
@@ -165,10 +200,10 @@ int main() {
 								}
 							}
 							if (e.key.code == Keyboard::Space) {
+								timer = 0;
 								while (game.checkDown(board)) {
 									game.moveDown(board);
 								}
-								timer = 0;
 							}
 						}
 					}
@@ -185,7 +220,17 @@ int main() {
 			float time = clock.getElapsedTime().asSeconds();
 			clock.restart();
 			timer += time;
+			
 			if (!board.gameOver() && !isGamePaused) {
+
+				if (game.collectedPU != 0) {
+					game.powerUpTimer+= time;
+					if (game.powerUpTimer >= game.powerUpActiveTime) {
+						game.powerUpTimer = 0;
+						game.collectedPU = 0;
+					}
+				}
+
 				game.secondsElapsed += time;
 				if (game.secondsElapsed >= 60) {
 					game.secondsElapsed = 0;
@@ -204,12 +249,14 @@ int main() {
 					if (timer > game.delay) {
 						board.merge();
 						board.clearLine(game.score);
-						if(!board.gameOver()) game.addPieceToBoard(board, pieces);
+						if (!board.gameOver()) {
+							game.addPieceToBoard(board, pieces);
+							cout << "trece de functie" << endl;
+						}
 						if (game.score >= 500 && scoreChanged==0 ) {scoreChanged = 1;
 							game.delay /= 1.6;
 							game.generatePowerUp(board, pieces);
 							std::cout << "Delay : " << game.delay << " ScoreChanged: " << scoreChanged << std::endl;
-							
 						}
 						if (game.score >= 1000 && scoreChanged == 1) {
 							scoreChanged = 2;
