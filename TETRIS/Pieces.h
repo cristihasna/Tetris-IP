@@ -1,16 +1,4 @@
-#pragma once
-#include <SFML\Graphics.hpp>
-
-#define PU_NUM 3;
-
-class Pieces
-{
-public:
-
-	
-
-	// define pieces
-	char pieces[7 /*kind */][4 /* rotation */][5 /* rows */][5 /* cols */] =
+char pieces[7 /*kind */][4 /* rotation */][5 /* rows */][5 /* cols */] =
 	{
 		// Square
 		{
@@ -232,68 +220,3 @@ public:
 			}
 		}
 	};
-
-	char piecesInitialPosition[7 /*kind */][4 /* rotation */][2 /* position */] =
-	{
-		/* Square */
-		{
-			{ 2, 2 },
-			{ 2, 2 },
-			{ 2, 2 },
-			{ 2, 2 }
-		},
-		/* I */
-		{
-			{ 2, 1 },
-			{ 1, 2 },
-			{ 2, 0 },
-			{ 0, 2 }
-		},
-		/* L */
-		{
-			{ 1, 2 },
-			{ 2, 1 },
-			{ 1, 1 },
-			{ 1, 1 }
-		},
-		/* L mirrored */
-		{
-			{ 1, 1 },
-			{ 1, 1 },
-			{ 1, 2 },
-			{ 2, 1 }
-		},
-		/* N */
-		{
-			{ 1, 2 },
-			{ 2, 1 },
-			{ 1, 1 },
-			{ 1, 1 }
-		},
-		/* N mirrored */
-		{
-			{ 1, 2 },
-			{ 2, 1 },
-			{ 1, 1 },
-			{ 1, 1 }
-		},
-		/* T */
-		{
-			{ 1, 2 },
-			{ 2, 1 },
-			{ 1, 1 },
-			{ 1, 1 }
-		}
-	};
-
-
-	
-
-	Pieces(sf::RenderWindow &window);
-
-	~Pieces();
-
-	bool getBlockType(int piece, int rotation, int x, int y);
-	sf::Vector2i getInitialPosition(int piece, int rotation);
-};
-

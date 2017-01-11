@@ -35,5 +35,6 @@ public:
 	int getSelectedMenuItem() {
 		return selectedItem;
 	}
+	Score getScoreToBeat(int score);
 };
 

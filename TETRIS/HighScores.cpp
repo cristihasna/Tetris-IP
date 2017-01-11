@@ -165,3 +165,17 @@ void HighScores::transformHighScores(Score highScores[MAX_H_SCORES]) {
 		}
 	}
 }
+Score HighScores::getScoreToBeat(int score) {
+	if (score <HighScores::highScores[4].score) return HighScores::highScores[4];
+	else if (score < HighScores::highScores[3].score) return HighScores::highScores[3];
+	else if (score < HighScores::highScores[2].score) return HighScores::highScores[2];
+	else if (score < HighScores::highScores[1].score) return HighScores::highScores[1];
+	else if (score < HighScores::highScores[0].score) return HighScores::highScores[0];
+	else {
+		Score result;
+		result.score = score;
+		result.minutesElapsed = 0;
+		result.secondsElapsed = 0;
+		return result;
+	}
+}

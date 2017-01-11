@@ -1,5 +1,6 @@
 #include "Board.h"
 #include <time.h>
+#include <iostream>
 #include <stdlib.h>
 
 Board::Board(sf::RenderWindow &window)
@@ -36,6 +37,7 @@ void Board::merge() {
 }
 
 void Board::clearLine(int &score){
+	std::cout << "scor inainte: " << score;
 	score += 10;
 	int cleared = 0;
 	int coeficient = 100;
@@ -56,9 +58,10 @@ void Board::clearLine(int &score){
 		}
 	}
 	score += cleared * cleared * coeficient;
+	std::cout << "scor dupa: " << score << std::endl;
 }
 
-void Board::Draw(sf::RenderWindow &window, sf::Vector3i nextPiece){
+void Board::Draw(sf::RenderWindow &window, sf::Vector3i nextPiece, char pieces[7][4][5][5]){
 	sf::Texture blockBackground, gameBackground;
 	blockBackground.loadFromFile("images/tiles.png");
 	gameBackground.loadFromFile("images/gameBg.jpg");
@@ -100,10 +103,9 @@ void Board::Draw(sf::RenderWindow &window, sf::Vector3i nextPiece){
 				window.draw(powerUpBlock);
 			}
 		}
-	Pieces pieces(window);
 	for(int i=0;i<5;i++)
 		for (int j = 0; j < 5; j++) {
-			if (pieces.pieces[nextPiece.x][nextPiece.y][i][j] != 0) {
+			if (pieces[nextPiece.x][nextPiece.y][i][j] != 0) {
 				block.setTextureRect(sf::IntRect(levelOfDanger * 18, (nextPiece.z + 1) * 18, 18, 18));
 				block.setPosition(sf::Vector2f((j + OFFSET_X + COLS + 1) * 18, (i + OFFSET_Y) * 18));
 				window.draw(block);
