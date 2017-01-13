@@ -37,6 +37,7 @@ int main() {
 
 	float timer = 0, generatePowerUpTimer=0;
 	bool isMenuActive = true,
+		isHTPActive = false,
 		isGameActive = false,
 		isHighScoresActive = false,
 		isGamePaused = false,
@@ -76,8 +77,11 @@ int main() {
 							isHighScoresActive = true;
 							highScores.readHighScores(highScores.highScores);
 						}
-
 						else if (menu.getSelectedMenuItem() == 2) {
+							isHTPActive = true;
+							isMenuActive = false;
+						}
+						else if (menu.getSelectedMenuItem() == 3) {
 							window.close();
 						}
 
@@ -85,7 +89,14 @@ int main() {
 				}
 
 			}
-
+			else if (isHTPActive) {
+				if (e.type == Event::KeyPressed) {
+					if (e.key.code == Keyboard::Escape) {
+						isHTPActive = false;
+						isMenuActive = true;
+					}
+				}
+			}
 			else if (isHighScoresActive) {
 				if (e.type == Event::KeyPressed) {
 					if (e.key.code == Keyboard::Up)
@@ -325,7 +336,9 @@ int main() {
 
 		if (isMenuActive)
 			menu.Draw(window);
-
+		else if (isHTPActive) {
+			menu.DrawHTP(window);
+		}
 		else if (isGameActive) {
 
 			board.Draw(window, game.nextPiece, game.heldPiece, pieces);

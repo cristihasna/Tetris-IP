@@ -1,7 +1,7 @@
 #pragma once
 #include <SFML\Graphics.hpp>
 
-#define MAX_NUM_ITEMS 3
+#define MAX_NUM_ITEMS 4
 class Menu
 {
 public:
@@ -11,6 +11,7 @@ public:
 	void Draw(sf::RenderWindow &window);
 	void MoveUp();
 	void MoveDown();
+	void DrawHTP(sf::RenderWindow &window);
 
 	int getSelectedMenuItem() {
 		return selectedItemIndex;

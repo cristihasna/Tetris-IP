@@ -3,7 +3,7 @@
 
 #define ROWS 20
 #define COLS 15
-#define OFFSET_X 3
+#define OFFSET_X 10
 #define OFFSET_Y 3
 struct block {
 	char value;
