@@ -19,6 +19,7 @@ void Board::init() {
 		for (int j = 0; j < COLS; j++) {
 			board[i][j].value = 0;
 			board[i][j].color = 0;
+			board[i][j].timer = 0;
 		}
 			
 }
@@ -37,7 +38,6 @@ void Board::merge() {
 }
 
 void Board::clearLine(int &score){
-	std::cout << "scor inainte: " << score;
 	score += 10;
 	int cleared = 0;
 	int coeficient = 100;
@@ -58,16 +58,16 @@ void Board::clearLine(int &score){
 		}
 	}
 	score += cleared * cleared * coeficient;
-	std::cout << "scor dupa: " << score << std::endl;
 }
 
-void Board::Draw(sf::RenderWindow &window, sf::Vector3i nextPiece, char pieces[7][4][5][5]){
-	sf::Texture blockBackground, gameBackground;
+void Board::Draw(sf::RenderWindow &window, sf::Vector3i nextPiece, sf::Vector3i heldPiece, char pieces[7][4][5][5]) {
+	sf::Texture blockBackground, gameBackground, smallBlockBackground;
 	blockBackground.loadFromFile("images/tiles.png");
 	gameBackground.loadFromFile("images/gameBg.jpg");
+	smallBlockBackground.loadFromFile("images/tiles_small.png");
 
 	sf::Sprite block(blockBackground), background(gameBackground);
-
+	sf::Sprite smallBlock(smallBlockBackground);
 	sf::Sprite powerUpBlock(blockBackground);
 
 	background.setTextureRect(sf::IntRect(0, 0, window.getSize().x, window.getSize().y));
@@ -97,7 +97,7 @@ void Board::Draw(sf::RenderWindow &window, sf::Vector3i nextPiece, char pieces[7
 				block.setPosition(sf::Vector2f(j * 18+OFFSET_X*18, i * 18+OFFSET_Y*18));
 				window.draw(block);
 			}
-			else if (board[i][j].value == 4 || board[i][j].value == 5 || board[i][j].value == 6) {
+			else if (board[i][j].value == 4 || board[i][j].value == 5 || board[i][j].value == 6 || board[i][j].value == 7) {
 				powerUpBlock.setTextureRect(sf::IntRect(board[i][j].value%4*18, 0, 18, 18));
 				powerUpBlock.setPosition(sf::Vector2f(j * 18 + OFFSET_X * 18, i * 18 + OFFSET_Y * 18));
 				window.draw(powerUpBlock);
@@ -111,4 +111,14 @@ void Board::Draw(sf::RenderWindow &window, sf::Vector3i nextPiece, char pieces[7
 				window.draw(block);
 			}
 		}
+	if (heldPiece.x != -1) {
+		for(int i=0;i<5;i++)
+			for (int j = 0; j < 5; j++) {
+				if (pieces[heldPiece.x][heldPiece.y][i][j] != 0) {
+					smallBlock.setTextureRect(sf::IntRect(levelOfDanger * 10, heldPiece.z * 10, 10, 10));
+					smallBlock.setPosition(sf::Vector2f((OFFSET_X + COLS + 1) * 18 + j * 10, (OFFSET_Y + ROWS) * 18 - (5 - i) * 10));
+					window.draw(smallBlock);
+				}
+			}
+	}
 }

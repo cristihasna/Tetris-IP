@@ -1,6 +1,9 @@
-﻿  Game.cpp
-e:\onedrive\tools\homeworks\tetris\tetris\game.cpp(44): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
-e:\onedrive\tools\homeworks\tetris\tetris\game.cpp(51): warning C4305: '=': truncation from 'double' to 'float'
-e:\onedrive\tools\homeworks\tetris\tetris\game.cpp(212): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+﻿  Source.cpp
+e:\onedrive\tools\homeworks\tetris\tetris\source.cpp(29): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+e:\onedrive\tools\homeworks\tetris\tetris\source.cpp(286): warning C4305: '/=': truncation from 'double' to 'float'
+e:\onedrive\tools\homeworks\tetris\tetris\source.cpp(291): warning C4305: '/=': truncation from 'double' to 'float'
+e:\onedrive\tools\homeworks\tetris\tetris\source.cpp(298): warning C4305: '/=': truncation from 'double' to 'float'
+e:\onedrive\tools\homeworks\tetris\tetris\source.cpp(305): warning C4305: '/=': truncation from 'double' to 'float'
+e:\onedrive\tools\homeworks\tetris\tetris\source.cpp(312): warning C4305: '/=': truncation from 'double' to 'float'
   TETRIS.vcxproj -> E:\OneDrive\tools\homeworks\TETRIS\Debug\TETRIS.exe
   TETRIS.vcxproj -> E:\OneDrive\tools\homeworks\TETRIS\Debug\TETRIS.pdb (Partial PDB)

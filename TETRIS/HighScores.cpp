@@ -45,7 +45,6 @@ void HighScores::Draw(sf::RenderWindow &window) {
 
 
 	for (int i = 0; i < 10; i++) {
-		//std::cout << HighScores::scores[i].getPosition().y << std::endl;
 		window.draw(HighScores::scores[i]);
 
 	}
@@ -90,7 +89,6 @@ void HighScores::saveScore(Score highScores[MAX_H_SCORES]) {
 void HighScores::processScore(int score, float minutesElapsed, float secondsElapsed, Score highScores[MAX_H_SCORES]) {
 	HighScores::readHighScores(highScores);
 	if (score > highScores[MAX_H_SCORES - 1].score) {
-		std::cout << "procesez scorul " <<score<< std::endl;
 		highScores[MAX_H_SCORES - 1].score = score;
 		highScores[MAX_H_SCORES - 1].minutesElapsed = minutesElapsed;
 		highScores[MAX_H_SCORES - 1].secondsElapsed = (int)secondsElapsed;
@@ -104,26 +102,16 @@ void HighScores::processScore(int score, float minutesElapsed, float secondsElap
 		}
 		HighScores::saveScore(highScores);
 	}
-	std::cout<<"scorul dupa procesare:"<<std::endl;
-	for (int i = 0; i < MAX_H_SCORES; i++) {
-		std::cout << highScores[i].score << " ";
-		std::cout << highScores[i].minutesElapsed << " ";
-		std::cout << highScores[i].secondsElapsed << std::endl;
-	}
 
 }
 
 void HighScores::readHighScores(Score highScores[MAX_H_SCORES]) {
 	
 	std::ifstream f("HighScores.txt");
-	std::cout << "citesc din fisier: " << std::endl;
 	for (int i = 0; i < MAX_H_SCORES; i++) {
 		f >> highScores[i].score;
-		std::cout << highScores[i].score << " ";
 		f >> highScores[i].minutesElapsed;
-		std::cout << highScores[i].minutesElapsed << " ";
 		f >> highScores[i].secondsElapsed;
-		std::cout << highScores[i].secondsElapsed << std::endl;
 	}
 	HighScores::transformHighScores(highScores);
 }

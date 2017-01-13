@@ -8,6 +8,7 @@
 struct block {
 	char value;
 	char color;
+	float timer;
 };
 class Board
 {
@@ -22,7 +23,7 @@ public:
 	bool gameOver();
 	void clearLine(int &score);
 	void merge();
-	void Draw(sf::RenderWindow &window, sf::Vector3i nextPiece, char pieces[7][4][5][5]);
+	void Draw(sf::RenderWindow &window, sf::Vector3i nextPiece, sf::Vector3i heldPiece, char pieces[7][4][5][5]);
 
 	int firstRow;
 

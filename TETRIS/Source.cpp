@@ -1,4 +1,5 @@
 #include <SFML\Graphics.hpp>
+#include <SFML\Audio.hpp>
 #include <ctime>
 #include <iostream>
 #include "Menu.h"
@@ -18,23 +19,23 @@ int main() {
 	RenderWindow window(VideoMode(720, 480), "Tetris", Style::Close);
 	window.setMouseCursorVisible(false);
 
+	Music intro, inGameIntro, move, clearLine, clearPieces, holdPiece;
+	intro.openFromFile("sounds/intro.ogg");
+	inGameIntro.openFromFile("sounds/intro_game.ogg");
+	move.openFromFile("sounds/move.ogg");
+	clearLine.openFromFile("sounds/clear_line.ogg");
+	clearPieces.openFromFile("sounds/clear_line_2.ogg");
+	holdPiece.openFromFile("sounds/hold.ogg");
 	Menu menu(window.getSize().x, window.getSize().y);
 	HighScores highScores(window);
 	Board board(window);
 	Game game(window);
 
-	for (int i = 0; i < 4; i++) {
-		for (int j = 0; j < 5; j++) {
-			for (int p = 0; p < 5; p++)
-				cout << (int)pieces[6][i][j][p] << " ";
-			cout << endl;
-		}
-		cout << "-------------" << endl;
-	}
+	intro.play();
 
 	Clock clock;
 
-	float timer = 0;
+	float timer = 0, generatePowerUpTimer=0;
 	bool isMenuActive = true,
 		isGameActive = false,
 		isHighScoresActive = false,
@@ -47,15 +48,6 @@ int main() {
 
 		Event e;
 		while (window.pollEvent(e)) {
-
-			if (e.type == Event::MouseButtonPressed) {
-				if (e.key.code == sf::Mouse::Button::Left) {
-					sf::Vector2i mousePos = sf::Mouse::getPosition();
-					cout << "clicked pe pozitia " << mousePos.x << " / " << mousePos.y << endl;
-
-				}
-			}
-
 
 			if (isMenuActive) {
 				if (e.type == Event::KeyPressed) {
@@ -72,6 +64,7 @@ int main() {
 							isGameActive = true;
 							isMenuActive = false;
 							game.init(board, pieces);
+							inGameIntro.play();
 							scoreChanged = 0;
 							scoreProcessed = false;
 							highScores.readHighScores(highScores.highScores);
@@ -79,7 +72,6 @@ int main() {
 						}
 
 						else if (menu.getSelectedMenuItem() == 1) {
-							cout << "High Scores" << endl;
 							isMenuActive = false;
 							isHighScoresActive = true;
 							highScores.readHighScores(highScores.highScores);
@@ -103,13 +95,11 @@ int main() {
 					if (e.key.code == Keyboard::Return) {
 						if (highScores.getSelectedMenuItem() == 0) {
 							highScores.resetScores(highScores.highScores);
-							cout << "am sters scorurile" << endl;
 							isHighScoresActive = false;
 							isMenuActive = true;
 						}
 						if (highScores.getSelectedMenuItem() == 1) {
 							highScores.MoveUp();
-							cout << "Am trecut la meniu principal" << endl;
 							isHighScoresActive = false;
 							isMenuActive = true;
 						}
@@ -121,15 +111,12 @@ int main() {
 				if (e.type == Event::KeyPressed) {
 					if (isGamePaused) {
 						if (e.key.code == Keyboard::Escape) {
-							cout << "am apasat esc" << endl;
 							isGamePaused = false;
 						}
 						if (e.key.code == Keyboard::Return) {
-							cout << "am apasat ender" << endl;
 							isGamePaused = false;
 							isGameActive = false;
 							isMenuActive = true;
-
 							if (!scoreProcessed) {
 								highScores.processScore(game.score, game.minutesElapsed, game.secondsElapsed, highScores.highScores);
 								scoreProcessed = true;
@@ -138,7 +125,6 @@ int main() {
 					}
 					else {
 						if (e.key.code == Keyboard::Escape) {
-							cout << "am apasat esc" << endl;
 							if (board.gameOver()) {
 
 								isGamePaused = false;
@@ -159,13 +145,15 @@ int main() {
 								if (game.collectedPU != 4) {
 									if (game.checkLeft(board)) {
 										game.moveLeft(board);
-										timer = 0;
+										if (game.collectedPU != 6) timer = 0;
+										move.play();
 									}
 								}
 								else {
 									if (game.checkRight(board)) {
 										game.moveRight(board);
-										timer = 0;
+										if(game.collectedPU!=6) timer = 0;
+										move.play();
 									}
 								}
 							}
@@ -173,35 +161,44 @@ int main() {
 								if (game.collectedPU != 4) {
 									if (game.checkRight(board)) {
 										game.moveRight(board);
-										timer = 0;
+										if(game.collectedPU!=6) timer = 0;
+										move.play();
 									}
 								}
 								else {
 									if (game.checkLeft(board)) {
 										game.moveLeft(board);
-										timer = 0;
+										if (game.collectedPU != 6) timer = 0;
+										move.play();
 									}
 								}
 							}
 
-							if (e.key.code == Keyboard::Down) {
+							if (e.key.code == Keyboard::Down && game.collectedPU!=6) {
 								if (game.checkDown(board)) {
 									game.moveDown(board);
 									timer = 0;
+									move.play();
 								}
 							}
-							if (e.key.code == Keyboard::Up) {
-								if (game.checkRotate(board, game.actualPiece, pieces)) {
-									game.Rotate(board, game.actualPiece, pieces);
+							if (e.key.code == Keyboard::Up && game.collectedPU!=6) {
+								if (game.checkRotate(board, game.currentPiece, pieces)) {
+									game.Rotate(board, game.currentPiece, pieces);
 									timer = 0;
-									cout << game.score << endl;
+									move.play();
 								}
 							}
-							if (e.key.code == Keyboard::Space) {
+							if (e.key.code == Keyboard::Space && game.collectedPU!=6) {
 								timer = 0;
 								while (game.checkDown(board)) {
 									game.moveDown(board);
 								}
+								move.play();
+							}
+							if ((e.key.code == Keyboard::LControl || e.key.code == Keyboard::RControl)  && !game.isPieceHold && game.collectedPU!=6) {
+								game.holdPiece(board, pieces);
+								timer = 0;
+								holdPiece.play();
 							}
 						}
 					}
@@ -218,8 +215,25 @@ int main() {
 			float time = clock.getElapsedTime().asSeconds();
 			clock.restart();
 			timer += time;
-
+			
 			if (!board.gameOver() && !isGamePaused) {
+
+				for (int i = 0; i<ROWS; i++)
+					for (int j = 0; j < COLS; j++) {
+						if (board.board[i][j].value == 4 || board.board[i][j].value == 5 || board.board[i][j].value == 6) {
+							board.board[i][j].timer += time;
+							if (board.board[i][j].timer >= game.powerUpVisibleTime) {
+								board.board[i][j].timer = 0;
+								board.board[i][j].value = 0;
+							}
+						}
+					}
+
+				generatePowerUpTimer += time;
+				if (generatePowerUpTimer >= game.generatePowerUpDelay) {
+					game.generatePowerUp(board, game.generatePowerUpDelay);
+					generatePowerUpTimer = 0;
+				}
 
 				if (game.collectedPU != 0) {
 					game.powerUpTimer += time;
@@ -237,55 +251,67 @@ int main() {
 			}
 
 			if (!board.gameOver() && !isGamePaused) {
+
+
 				if (game.checkDown(board)) {
 					if (timer > game.delay) {
 						timer = 0;
 						game.moveDown(board);
+						move.play();
+						if (game.collectedPU == 6) {
+							if (game.checkRotate(board, game.currentPiece, pieces))
+							game.Rotate(board, game.currentPiece, pieces);
+						}
 					}
 				}
 				else {
 					if (timer > game.delay) {
+						game.isPieceHold = false;
 						board.merge();
+						int scoreBefore = game.score;
 						board.clearLine(game.score);
+						if (scoreBefore != game.score+10)
+							clearLine.play();
+
+						if (game.collectedPU == 6) {
+							game.collectedPU = 0;
+							game.powerUpTimer = 0;
+						}
+							
 						if (!board.gameOver()) {
 							game.addPieceToBoard(board, pieces);
 						}
 						if (game.score >= 500 && scoreChanged == 0) {
 							scoreChanged = 1;
 							game.delay /= 1.6;
-							game.generatePowerUp(board);
-							std::cout << "Delay : " << game.delay << " ScoreChanged: " << scoreChanged << std::endl;
+							game.generatePowerUp(board, game.generatePowerUpDelay);
 						}
 						if (game.score >= 1000 && scoreChanged == 1) {
 							scoreChanged = 2;
 							game.delay /= 1.3;
 
-							game.generatePowerUp(board);
-							std::cout << "Delay : " << game.delay << " ScoreChanged: " << scoreChanged << std::endl;
+							game.generatePowerUp(board, game.generatePowerUpDelay);
 
 						}
 						if (game.score >= 1500 && scoreChanged == 2) {
 							scoreChanged = 3;
 							game.delay /= 1.3;
 
-							game.generatePowerUp(board);
-							std::cout << "Delay : " << game.delay << " ScoreChanged: " << scoreChanged << std::endl;
+							game.generatePowerUp(board, game.generatePowerUpDelay);
 
 						}
 						if (game.score >= 2000 && scoreChanged == 3) {
 							scoreChanged = 4;
 							game.delay /= 1.3;
 
-							game.generatePowerUp(board);
-							std::cout << "Delay : " << game.delay << " ScoreChanged: " << scoreChanged << std::endl;
+							game.generatePowerUp(board, game.generatePowerUpDelay);
 
 						}
 						if (game.score >= 2500 && scoreChanged == 4) {
 							scoreChanged = 5;
 							game.delay /= 1.3;
 
-							game.generatePowerUp(board);
-							std::cout << "Delay : " << game.delay << " ScoreChanged: " << scoreChanged << std::endl;
+							game.generatePowerUp(board, game.generatePowerUpDelay);
 
 						}
 						timer = 0;
@@ -302,7 +328,7 @@ int main() {
 
 		else if (isGameActive) {
 
-			board.Draw(window, game.nextPiece, pieces);
+			board.Draw(window, game.nextPiece, game.heldPiece, pieces);
 			game.drawInfo(window, highScores);
 
 			if (isGamePaused) {
