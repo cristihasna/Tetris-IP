@@ -1,6 +1,9 @@
-﻿  Menu.cpp
-e:\onedrive\tools\homeworks\tetris\tetris\menu.cpp(22): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-e:\onedrive\tools\homeworks\tetris\tetris\menu.cpp(28): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
-e:\onedrive\tools\homeworks\tetris\tetris\menu.cpp(34): warning C4244: 'argument': conversion from 'double' to 'float', possible loss of data
+﻿  Source.cpp
+e:\onedrive\tools\homeworks\tetris\tetris\source.cpp(31): warning C4244: 'argument': conversion from 'unsigned int' to 'float', possible loss of data
+e:\onedrive\tools\homeworks\tetris\tetris\source.cpp(336): warning C4305: '/=': truncation from 'double' to 'float'
+e:\onedrive\tools\homeworks\tetris\tetris\source.cpp(341): warning C4305: '/=': truncation from 'double' to 'float'
+e:\onedrive\tools\homeworks\tetris\tetris\source.cpp(348): warning C4305: '/=': truncation from 'double' to 'float'
+e:\onedrive\tools\homeworks\tetris\tetris\source.cpp(355): warning C4305: '/=': truncation from 'double' to 'float'
+e:\onedrive\tools\homeworks\tetris\tetris\source.cpp(362): warning C4305: '/=': truncation from 'double' to 'float'
   TETRIS.vcxproj -> E:\OneDrive\tools\homeworks\TETRIS\Debug\TETRIS.exe
   TETRIS.vcxproj -> E:\OneDrive\tools\homeworks\TETRIS\Debug\TETRIS.pdb (Partial PDB)

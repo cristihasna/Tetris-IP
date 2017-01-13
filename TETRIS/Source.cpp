@@ -19,21 +19,30 @@ int main() {
 	RenderWindow window(VideoMode(720, 480), "Tetris", Style::Close);
 	window.setMouseCursorVisible(false);
 
-	Music intro, inGameIntro, move, clearLine, clearPieces, holdPiece;
+	Music intro, inGameIntro, move, rotate, clearLine, clearPieces, holdPiece, menuSound, choseOption;
 	intro.openFromFile("sounds/intro.ogg");
-	inGameIntro.openFromFile("sounds/intro_game.ogg");
-	move.openFromFile("sounds/move.ogg");
+	move.openFromFile("sounds/pop1.ogg");
 	clearLine.openFromFile("sounds/clear_line.ogg");
-	clearPieces.openFromFile("sounds/clear_line_2.ogg");
+	rotate.openFromFile("sounds/pop2.ogg");
+	clearLine.setVolume(50);
 	holdPiece.openFromFile("sounds/hold.ogg");
+	menuSound.openFromFile("sounds/menu.ogg");
+	choseOption.openFromFile("sounds/choseOption.ogg");
 	Menu menu(window.getSize().x, window.getSize().y);
 	HighScores highScores(window);
 	Board board(window);
 	Game game(window);
 
-	intro.play();
-
 	Clock clock;
+
+	sf::Texture muteBg, unmuteBg;
+	muteBg.loadFromFile("images/mute.png");
+	unmuteBg.loadFromFile("images/unmute.png");
+	sf::Sprite muteSprite(muteBg), unmuteSprite(unmuteBg);
+	muteSprite.setTextureRect(sf::IntRect(0, 0, 25, 24));
+	muteSprite.setPosition(sf::Vector2f(46, 53));
+	unmuteSprite.setPosition(sf::Vector2f(50, 50));
+	unmuteSprite.setTextureRect(sf::IntRect(0, 0, 25, 25));
 
 	float timer = 0, generatePowerUpTimer=0;
 	bool isMenuActive = true,
@@ -41,7 +50,8 @@ int main() {
 		isGameActive = false,
 		isHighScoresActive = false,
 		isGamePaused = false,
-		scoreProcessed = false;
+		scoreProcessed = false,
+		mute=false;
 
 	int scoreChanged = 0;
 
@@ -49,15 +59,28 @@ int main() {
 
 		Event e;
 		while (window.pollEvent(e)) {
+			if (e.type == Event::KeyPressed) {
+				if (e.key.code == Keyboard::M) {
+					if (mute == false)
+						mute = true;
+					else mute = false;
+				}
+			}
 
 			if (isMenuActive) {
 				if (e.type == Event::KeyPressed) {
 
-					if (e.key.code == Keyboard::Up)
+					if (e.key.code == Keyboard::Up) {
 						menu.MoveUp();
 
-					if (e.key.code == Keyboard::Down)
+						if (!mute) menuSound.play();
+					}
+
+					if (e.key.code == Keyboard::Down) {
 						menu.MoveDown();
+
+						if (!mute) menuSound.play();
+					}
 
 					if (e.key.code == Keyboard::Return) {
 
@@ -65,8 +88,8 @@ int main() {
 							isGameActive = true;
 							isMenuActive = false;
 							game.init(board, pieces);
-							inGameIntro.play();
 							scoreChanged = 0;
+							if (!mute) intro.play();
 							scoreProcessed = false;
 							highScores.readHighScores(highScores.highScores);
 							clock.restart();
@@ -84,10 +107,12 @@ int main() {
 						else if (menu.getSelectedMenuItem() == 3) {
 							window.close();
 						}
+						if (!mute) {
+							choseOption.play();
+						}
 
 					}
 				}
-
 			}
 			else if (isHTPActive) {
 				if (e.type == Event::KeyPressed) {
@@ -99,10 +124,15 @@ int main() {
 			}
 			else if (isHighScoresActive) {
 				if (e.type == Event::KeyPressed) {
-					if (e.key.code == Keyboard::Up)
+					if (e.key.code == Keyboard::Up) {
 						highScores.MoveUp();
-					if (e.key.code == Keyboard::Down)
+						if (!mute) menuSound.play();
+					}
+					if (e.key.code == Keyboard::Down) {
 						highScores.MoveDown();
+
+						if (!mute) menuSound.play();
+					}
 					if (e.key.code == Keyboard::Return) {
 						if (highScores.getSelectedMenuItem() == 0) {
 							highScores.resetScores(highScores.highScores);
@@ -114,6 +144,8 @@ int main() {
 							isHighScoresActive = false;
 							isMenuActive = true;
 						}
+
+						if (!mute) choseOption.play();
 					}
 				}
 
@@ -123,6 +155,8 @@ int main() {
 					if (isGamePaused) {
 						if (e.key.code == Keyboard::Escape) {
 							isGamePaused = false;
+
+							if (!mute) menuSound.play();
 						}
 						if (e.key.code == Keyboard::Return) {
 							isGamePaused = false;
@@ -132,6 +166,8 @@ int main() {
 								highScores.processScore(game.score, game.minutesElapsed, game.secondsElapsed, highScores.highScores);
 								scoreProcessed = true;
 							}
+
+							if (!mute) menuSound.play();
 						}
 					}
 					else {
@@ -146,6 +182,8 @@ int main() {
 									highScores.processScore(game.score, game.minutesElapsed, game.secondsElapsed, highScores.highScores);
 									scoreProcessed = true;
 								}
+
+								if (!mute) menuSound.play();
 							}
 							else isGamePaused = true;
 						}
@@ -157,14 +195,14 @@ int main() {
 									if (game.checkLeft(board)) {
 										game.moveLeft(board);
 										if (game.collectedPU != 6) timer = 0;
-										move.play();
+										if(!mute) move.play();
 									}
 								}
 								else {
 									if (game.checkRight(board)) {
 										game.moveRight(board);
 										if(game.collectedPU!=6) timer = 0;
-										move.play();
+										if (!mute)move.play();
 									}
 								}
 							}
@@ -173,14 +211,14 @@ int main() {
 									if (game.checkRight(board)) {
 										game.moveRight(board);
 										if(game.collectedPU!=6) timer = 0;
-										move.play();
+										if (!mute)move.play();
 									}
 								}
 								else {
 									if (game.checkLeft(board)) {
 										game.moveLeft(board);
 										if (game.collectedPU != 6) timer = 0;
-										move.play();
+										if (!mute)move.play();
 									}
 								}
 							}
@@ -189,14 +227,14 @@ int main() {
 								if (game.checkDown(board)) {
 									game.moveDown(board);
 									timer = 0;
-									move.play();
+									if (!mute)move.play();
 								}
 							}
 							if (e.key.code == Keyboard::Up && game.collectedPU!=6) {
 								if (game.checkRotate(board, game.currentPiece, pieces)) {
 									game.Rotate(board, game.currentPiece, pieces);
 									timer = 0;
-									move.play();
+									if (!mute)rotate.play();
 								}
 							}
 							if (e.key.code == Keyboard::Space && game.collectedPU!=6) {
@@ -204,12 +242,12 @@ int main() {
 								while (game.checkDown(board)) {
 									game.moveDown(board);
 								}
-								move.play();
+								if (!mute)move.play();
 							}
 							if ((e.key.code == Keyboard::LControl || e.key.code == Keyboard::RControl)  && !game.isPieceHold && game.collectedPU!=6) {
 								game.holdPiece(board, pieces);
 								timer = 0;
-								holdPiece.play();
+								if (!mute)holdPiece.play();
 							}
 						}
 					}
@@ -268,7 +306,7 @@ int main() {
 					if (timer > game.delay) {
 						timer = 0;
 						game.moveDown(board);
-						move.play();
+						if (!mute) move.play();
 						if (game.collectedPU == 6) {
 							if (game.checkRotate(board, game.currentPiece, pieces))
 							game.Rotate(board, game.currentPiece, pieces);
@@ -281,8 +319,9 @@ int main() {
 						board.merge();
 						int scoreBefore = game.score;
 						board.clearLine(game.score);
-						if (scoreBefore != game.score+10)
-							clearLine.play();
+						if (game.score>scoreBefore+10) {
+							if (!mute)clearLine.play();
+						}
 
 						if (game.collectedPU == 6) {
 							game.collectedPU = 0;
@@ -341,8 +380,14 @@ int main() {
 		}
 		else if (isGameActive) {
 
+
 			board.Draw(window, game.nextPiece, game.heldPiece, pieces);
 			game.drawInfo(window, highScores);
+
+
+			if (mute)
+				window.draw(muteSprite);
+			else window.draw(unmuteSprite);
 
 			if (isGamePaused) {
 				sf::Texture pausedGameBg;
